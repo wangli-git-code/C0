@@ -13,39 +13,6 @@ import java.util.*;
 
 public class App {
     public static void main(String[] args) throws IOException, CompileError {
-        try{
-            InputStream inputStream=new FileInputStream(args[0]);
-            Scanner scanner=new Scanner(inputStream);
-            StringIter iter=new StringIter(scanner);
-            Analyser temp=new Analyser(new Tokenizer(iter));
-            temp.analyseProgram();
-            for (globalDef globalDef:temp.getGlobalTable()){
-                System.out.println(globalDef);
-            }
-            List<Map.Entry<String, functionDef>> FunctionList = new ArrayList<Map.Entry<String, functionDef>>(temp.getFunctionTable().entrySet());
-            Collections.sort(FunctionList, new Comparator<Map.Entry<String, functionDef>>() {
-                public int compare(Map.Entry<String, functionDef> o1, Map.Entry<String, functionDef> o2) {
-                    return (o1.getValue().getFunction_id() - o2.getValue().getFunction_id());
-                }
-            });
-            for (Map.Entry<String, functionDef> functionDef : FunctionList) {
-                System.out.println(functionDef.getValue().getName());
-                System.out.println(functionDef);
-            }
-            produce output = new produce(temp.getGlobalTable(), FunctionList);
-            System.out.println();
-            DataOutputStream out = new DataOutputStream(new FileOutputStream(new File(args[1])));
-            List<Byte> bytes = output.getproduceOut();
-            byte[] resultBytes = new byte[bytes.size()];
-            for (int i = 0; i < bytes.size(); ++i) {
-                resultBytes[i] = bytes.get(i);
-            }
-            out.write(resultBytes);
-            System.exit(0);
-        }
-        catch (Exception s){
-            System.exit(-1);
-        }
 //        var argparse = buildArgparse();
 //
 //        Namespace result;
@@ -147,5 +114,41 @@ public class App {
 //    private static Tokenizer tokenize(StringIter iter) {
 //        var tokenizer = new Tokenizer(iter);
 //        return tokenizer;
+        try{
+            InputStream inputStream=new FileInputStream(args[0]);
+            Scanner scanner=new Scanner(inputStream);
+            StringIter iter=new StringIter(scanner);
+            iter.readAll();
+            System.out.println(iter.getLinesBuffer());
+            Analyser temp=new Analyser(new Tokenizer(iter));
+            temp.analyseProgram();
+            for (globalDef globalDef:temp.getGlobalTable()){
+                System.out.println(globalDef);
+            }
+            List<Map.Entry<String, functionDef>> FunctionList = new ArrayList<Map.Entry<String, functionDef>>(temp.getFunctionTable().entrySet());
+            Collections.sort(FunctionList, new Comparator<Map.Entry<String, functionDef>>() {
+                public int compare(Map.Entry<String, functionDef> o1, Map.Entry<String, functionDef> o2) {
+                    return (o1.getValue().getFunction_id() - o2.getValue().getFunction_id());
+                }
+            });
+            for (Map.Entry<String, functionDef> functionDef : FunctionList) {
+                System.out.println(functionDef.getValue().getName());
+                System.out.println(functionDef);
+            }
+            produce output = new produce(temp.getGlobalTable(), FunctionList);
+            System.out.println();
+            DataOutputStream out = new DataOutputStream(new FileOutputStream(new File(args[1])));
+            List<Byte> bytes = output.getproduceOut();
+            byte[] resultBytes = new byte[bytes.size()];
+            for (int i = 0; i < bytes.size(); ++i) {
+                resultBytes[i] = bytes.get(i);
+            }
+            out.write(resultBytes);
+            System.exit(0);
+        }
+        catch (Exception s){
+            System.out.println(s);
+            throw s;
+        }
     }
 }

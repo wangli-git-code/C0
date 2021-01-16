@@ -41,6 +41,7 @@ public class App {
                 resultBytes[i] = bytes.get(i);
             }
             out.write(resultBytes);
+            System.exit(0);
         }
         catch (Exception s){
             System.exit(-1);
